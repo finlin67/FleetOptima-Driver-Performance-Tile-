@@ -1,5 +1,8 @@
+
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { 
   X, 
   BarChart3, 
@@ -8,40 +11,79 @@ import {
   ChevronRight 
 } from 'lucide-react';
 
+interface ActivityItem {
+  id: string;
+  date: string;
+  route: string;
+  time: string;
+  status: 'On-Time' | 'Delay';
+  color: 'emerald' | 'amber';
+}
+
+const ACTIVITY_DATA: ActivityItem[] = [
+  { 
+    id: '1', 
+    date: 'Oct 24, 2023', 
+    route: 'ORD → Nashville Park', 
+    time: '+0m', 
+    status: 'On-Time', 
+    color: 'emerald' 
+  },
+  { 
+    id: '2', 
+    date: 'Oct 23, 2023', 
+    route: 'St. Louis → Chicago Hub', 
+    time: '+14m', 
+    status: 'Delay', 
+    color: 'amber' 
+  },
+  { 
+    id: '3', 
+    date: 'Oct 22, 2023', 
+    route: 'Indianapolis → St. Louis', 
+    time: '+0m', 
+    status: 'On-Time', 
+    color: 'emerald' 
+  },
+];
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" }
+  }
+};
+
+const listItemVariants: Variants = {
+  hidden: { opacity: 0, x: -10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: 0.2 + (i * 0.1), duration: 0.3 }
+  })
+};
+
+const progressVariants: Variants = {
+  hidden: { width: 0 },
+  visible: (width: string) => ({
+    width,
+    transition: { delay: 0.4, duration: 1, ease: "circOut" }
+  })
+};
+
 export default function FleetTile() {
-  // State for animations or potential interactivity
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { duration: 0.4, ease: "easeOut" }
-    }
-  };
-
-  const listItemVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: { delay: 0.2 + (i * 0.1), duration: 0.3 }
-    })
-  };
-
-  const progressVariants = {
-    hidden: { width: 0 },
-    visible: (width: string) => ({
-      width,
-      transition: { delay: 0.4, duration: 1, ease: "circOut" }
-    })
-  };
+  if (!mounted) {
+    // Return standard layout without animations during SSR/initial mount if needed
+    // In this case, we proceed to render to avoid layout shift, but animations trigger on mount.
+  }
 
   return (
     <motion.div 
@@ -56,9 +98,10 @@ export default function FleetTile() {
       {/* Header */}
       <header className="relative z-10 h-[15%] px-6 flex items-center justify-between border-b border-white/5 bg-slate-900/50 backdrop-blur-md">
         <div className="flex items-center gap-4">
-          <div 
-            className="w-12 h-12 rounded-xl border border-primary/30 bg-center bg-cover shadow-sm"
-            style={{ backgroundImage: 'url("https://picsum.photos/200/200")' }}
+          <img 
+            src="https://i.pravatar.cc/150?u=fo8842"
+            alt="Driver Profile"
+            className="w-12 h-12 rounded-xl border border-primary/30 object-cover shadow-sm"
           />
           <div>
             <h2 className="text-lg font-black text-white leading-tight">Marcus Sterling</h2>
@@ -71,7 +114,11 @@ export default function FleetTile() {
             98.4% EXCELLENT
           </div>
         </div>
-        <button className="absolute top-4 right-4 text-slate-600 hover:text-white transition-colors p-1 rounded-full hover:bg-white/5">
+        <button 
+          type="button"
+          className="absolute top-4 right-4 text-slate-600 hover:text-white transition-colors p-1 rounded-full hover:bg-white/5"
+          aria-label="Close"
+        >
           <X size={20} />
         </button>
       </header>
@@ -137,19 +184,18 @@ export default function FleetTile() {
         <div className="w-full flex-1 flex flex-col gap-2 overflow-y-auto px-2 min-h-0">
           <div className="flex items-center justify-between px-2 mb-1">
             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Recent Activity</span>
-            <button className="flex items-center gap-1 text-[9px] font-bold text-primary hover:underline hover:text-primary/80 transition-colors">
+            <button 
+              type="button"
+              className="flex items-center gap-1 text-[9px] font-bold text-primary hover:underline hover:text-primary/80 transition-colors"
+            >
               View Full History <ChevronRight size={10} />
             </button>
           </div>
 
           {/* List Items */}
-          {[
-            { date: 'Oct 24, 2023', route: 'ORD → Nashville Park', time: '+0m', status: 'On-Time', color: 'emerald' },
-            { date: 'Oct 23, 2023', route: 'St. Louis → Chicago Hub', time: '+14m', status: 'Delay', color: 'amber' },
-            { date: 'Oct 22, 2023', route: 'Indianapolis → St. Louis', time: '+0m', status: 'On-Time', color: 'emerald' },
-          ].map((item, i) => (
+          {ACTIVITY_DATA.map((item, i) => (
             <motion.div 
-              key={i}
+              key={item.id}
               custom={i}
               variants={listItemVariants}
               className="flex items-center gap-4 p-3 bg-white/5 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/10 transition-colors cursor-default group"
@@ -185,10 +231,16 @@ export default function FleetTile() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-[11px] hover:bg-slate-700 transition-all border border-slate-700 active:scale-95">
+          <button 
+            type="button"
+            className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-[11px] hover:bg-slate-700 transition-all border border-slate-700 active:scale-95"
+          >
             CSV
           </button>
-          <button className="px-5 py-2.5 rounded-xl bg-primary text-slate-900 font-black text-[11px] hover:brightness-110 transition-all shadow-[0_0_20px_rgba(9,178,215,0.3)] uppercase tracking-tight active:scale-95 active:shadow-none">
+          <button 
+            type="button"
+            className="px-5 py-2.5 rounded-xl bg-primary text-slate-900 font-black text-[11px] hover:brightness-110 transition-all shadow-[0_0_20px_rgba(9,178,215,0.3)] uppercase tracking-tight active:scale-95 active:shadow-none"
+          >
             Generate Full Report
           </button>
         </div>
@@ -196,3 +248,4 @@ export default function FleetTile() {
     </motion.div>
   );
 }
+    
