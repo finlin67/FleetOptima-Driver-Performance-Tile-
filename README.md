@@ -1,11 +1,30 @@
-<div align="center">
+# FleetOptima Driver Performance Tile
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+A standalone, high-performance React component extracted from the FleetOptima dashboard system. This component visualizes driver metrics, weekly aggregates, and recent activity log in a rigid 600x600px dark-themed card.
 
-  <h1>Built with AI Studio</h2>
+## Tech Stack
+- **React 18+**: Functional components with hooks.
+- **Tailwind CSS**: Utility-first styling with custom arbitrary values for glows and grid backgrounds.
+- **Framer Motion**: Smooth entrance animations for progress bars and list items.
+- **Lucide React**: Modern, consistent iconography replacing Google Material Symbols.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Usage
+The component is self-contained in `components/FleetTile.tsx`. It relies on Tailwind CSS classes.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+```tsx
+import FleetTile from './components/FleetTile';
 
-</div>
+function Dashboard() {
+  return (
+    <div className="flex justify-center items-center h-screen bg-slate-950">
+      <FleetTile />
+    </div>
+  );
+}
+```
+
+## Features
+- **Responsive Animations**: Progress bars fill up on mount; list items cascade in.
+- **Visual Effects**: Custom CSS-in-Tailwind implementation for grid backgrounds and glow effects (box-shadow).
+- **Interactive States**: Hover states on buttons, list items, and icons.
+- **Strict Dimensions**: Maintains a 1:1 aspect ratio (600px square) as per design specifications.

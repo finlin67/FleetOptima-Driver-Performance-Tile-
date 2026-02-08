@@ -1,0 +1,5 @@
+{
+  "name": "FleetOptima Dashboard Tile",
+  "description": "A high-performance, dark-themed driver performance analytics tile featuring data visualization for fleet management systems.",
+  "requestFramePermissions": []
+}
